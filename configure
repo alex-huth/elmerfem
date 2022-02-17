@@ -21,13 +21,14 @@ module unload cray-netcdf-hdf5parallel
 module load gcc/9.2.0
 module load PrgEnv-gnu/6.0.10
 module load cray-tpsl/20.03.2
+#module load cray-trilinos/12.18.1.1
 module load cmake/3.20.1
 
 export PATH=$PATH:/opt/cray/pe/tpsl/20.03.2/GNU/8.2/haswell/lib
-export PATH=$PATH:/opt/cray/pe/trilinos/12.18.1.1/GNU/8.2/x86_64/lib
+#export PATH=$PATH:/opt/cray/pe/trilinos/12.18.1.1/GNU/8.2/x86_64/lib
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cray/pe/tpsl/20.03.2/GNU/8.2/haswell/lib
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cray/pe/trilinos/12.18.1.1/GNU/8.2/x86_64/lib
+#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cray/pe/trilinos/12.18.1.1/GNU/8.2/x86_64/lib
 
 
 echo "Setup and compilation"
@@ -42,6 +43,8 @@ export Hypre_LIBRARIES="-lm"
 export Hypre_INCLUDE_DIR=" "
 export Mumps_LIBRARIES="-lm"
 export Mumps_INCLUDE_DIR=" "
+export Epectra_INCLUDE_DIRS="/opt/cray/pe/trilinos/12.18.1.1/GNU/8.2/x86_64/include" \
+export ML_INCLUDE_DIRS="/opt/cray/pe/trilinos/12.18.1.1/GNU/8.2/x86_64/include" \
 CRAY_ADD_RPATH=yes
 export CRAYPE_LINK_TYPE=dynamic
 CMAKE=cmake
@@ -84,15 +87,15 @@ $CMAKE -Wno-dev $ELMERSRC \
     -DWITH_ELMERGUI:BOOL=FALSE \
     -DWITH_ElmerIce:BOOL=TRUE \
     -DWITH_ScatteredDataInterpolator:BOOL=TRUE \
-    -DWITH_Trilinos:BOOL=TRUE \
-    -DWITH_Zoltan:Bool=TRUE \
-    -DUSE_SYSTEM_ZOLTAN:Bool=TRUE \
+    -DWITH_Trilinos:BOOL=FALSE \
+    -DWITH_Zoltan:Bool=FALSE \
+    -DUSE_SYSTEM_ZOLTAN:Bool=FALSE \
     -DTRILINOS_PATH:STRING="/opt/cray/pe/trilinos/12.18.1.1/GNU/8.2/x86_64" \
     -DEpectra_INCLUDE_DIRS:STRING="/opt/cray/pe/trilinos/12.18.1.1/GNU/8.2/x86_64/include" \
     -DML_INCLUDE_DIRS:STRING="/opt/cray/pe/trilinos/12.18.1.1/GNU/8.2/x86_64/include" \
     -DZOLTAN_INCLUDE_DIR="/opt/cray/pe/trilinos/12.18.1.1/GNU/8.2/x86_64/include" \
     -DZOLTAN_LIBRARY="/opt/cray/pe/trilinos/12.18.1.1/GNU/8.2/x86_64/lib/libzoltan.so" \
-    -DSOLTAN_LIBDIR="/opt/cray/pe/trilinos/12.18.1.1/GNU/8.2/x86_64/lib" \
+    -DZOLTAN_LIBDIR="/opt/cray/pe/trilinos/12.18.1.1/GNU/8.2/x86_64/lib" \
     -DHypre_LIBRARIES="-lm" \
     -DHypre_INCLUDE_DIR=" "\
     -DMumps_LIBRARIES="-lm" \

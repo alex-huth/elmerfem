@@ -21,8 +21,11 @@ Scattered2Dinterpolator is a great way to read in data, so highly recommend inst
 MMg probably is not needed except for Calving2D/Calving3D (Greenland-style calving)?
 
 According to ./config, Elmer will install in ./.. and the directory will be labeled with the date as Elmer_devel_mm-dd-yy. I like to make a symbolic link to this directory (cd ./.. ; ln -s ./Elmer_devel_mm-dd-yy ./Elmer). Then, add the following to the ~/.bashrc to run Elmer from anywhere (srun -n# ElmerSolver_mpi)
+
 export ELMER_HOME=/lustre/f2/dev/gfdl/Alexander.Huth/Elmer
+
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ELMER_HOME/lib
+
 export PATH=$PATH:$ELMER_HOME/bin
 
 Run ctests from ./build, noting that on Gaea, the serial Elmer/ice tests will fail unless you edit line 56 of ./elmerice/Tests/test_macros.cmake as follows: EXECUTE_PROCESS(COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 1 ${MPIEXEC_PREFLAGS} ${ELMERSOLVER_BIN} ${MPIEXEC_POSTFLAGS}

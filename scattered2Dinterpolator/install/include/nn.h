@@ -18,34 +18,16 @@
 #if !defined(_NN_H)
 #define _NN_H
 
-/* Contains version string for the nn package.
- */
-extern char* nn_version;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-/* Sets the verbosity level within nn package.
- * 0 (default) - silent
- * 1 - verbose
- * 2 - very verbose
- */
-extern int nn_verbose;
-
-/* Switches between different formulations for NN weights.
- * SIBSON -- classic formulation by Sibson
- * NON_SIBSONIAN -- alternative formulation by Belikov & Semenov
- *                  
- */
 typedef enum { SIBSON, NON_SIBSONIAN } NN_RULE;
-extern NN_RULE nn_rule;
-
-/* Limits verbose information to a particular vertex (used mainly for
- * debugging purposes).
- */
-extern int nn_test_vertice;
 
 /* "point" is a basic data structure in this package.
  */
-#if !defined(_STRUCT_POINT)
-#define _STRUCT_POINT
+#if !defined(_POINT_STRUCT)
+#define _POINT_STRUCT
 typedef struct {
     double x;
     double y;
@@ -53,11 +35,32 @@ typedef struct {
 } point;
 #endif
 
-#if !defined(_STRUCT_DELAUNAY)
-#define _STRUCT_DELAUNAY
+/* Constructors for interpolators in this package require Delaunay
+ * triangulation of the input data.
+ */
+#if !defined(_DELAUNAY_STRUCT)
+#define _DELAUNAY_STRUCT
 struct delaunay;
 typedef struct delaunay delaunay;
 #endif
+
+/** Builds Delaunay triangulation of the given array of points.
+ *
+ * @param np Number of points
+ * @param points Array of points [np] (input)
+ * @param ns Number of forced segments
+ * @param segments Array of (forced) segment endpoint indices [2*ns]
+ * @param nh Number of holes
+ * @param holes Array of hole (x,y) coordinates [2*nh]
+ * @return Delaunay triangulation structure with triangulation results
+ */
+delaunay* delaunay_build(int np, point points[], int ns, int segments[], int nh, double holes[]);
+
+/** Destroys Delaunay triangulation.
+ *
+ * @param d Structure to be destroyed
+ */
+void delaunay_destroy(delaunay* d);
 
 /** Smoothes the input point array by averaging the input x,y and z values
  ** for each cell within virtual rectangular nx by ny grid. The corners of the
@@ -174,7 +177,7 @@ void lpi_interpolate_point(lpi* l, point* p);
  * @param nout Number of ouput points
  * @param pout Array of output points [nout]
  */
-void lpi_interpolate_points(delaunay* d, int nout, point pout[]);
+void lpi_interpolate_points(int nin, point pin[], int nout, point pout[]);
 
 /** `nnpi' -- "Natural Neighbours Point Interpolator" is a structure for
  ** Natural Neighbours interpolation of data on a "point-to-point" basis.
@@ -214,7 +217,7 @@ void nnpi_interpolate_point(nnpi* nn, point* p);
  * @param nout Number of output points
  * @param pout Array of output points [nout]
  */
-void nnpi_interpolate_points(delaunay* d, double wmin, int nout, point pout[]);
+void nnpi_interpolate_points(int nin, point pin[], double wmin, int nout, point pout[]);
 
 /** Sets minimal allowed weight for Natural Neighbours interpolation.
  *
@@ -324,5 +327,32 @@ void nnai_interpolate(nnai* nn, double* zin, double* zout);
  * @param wmin Minimal allowed weight
  */
 void nnai_setwmin(nnai* nn, double wmin);
+
+/* Sets the verbosity level within nn package.
+ * 0 (default) - silent
+ * 1 - verbose
+ * 2 - very verbose
+ */
+extern int nn_verbose;
+
+/* Switches between different formulations for NN weights.
+ * SIBSON -- classic formulation by Sibson
+ * NON_SIBSONIAN -- alternative formulation by Belikov & Semenov
+ *                  
+ */
+extern NN_RULE nn_rule;
+
+/* Contains version string for the nn package.
+ */
+extern char* nn_version;
+
+/* Limits verbose information to a particular vertex (used mainly for
+ * debugging purposes).
+ */
+extern int nn_test_vertice;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif                          /* _NN_H */

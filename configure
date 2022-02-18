@@ -23,11 +23,18 @@ module load PrgEnv-gnu/6.0.10
 module load cray-tpsl/20.03.2
 #module load cray-trilinos/12.18.1.1
 module load cmake/3.20.1
+module load cray-netcdf/4.6.3.2
+#-hdf5parallel/4.6.3.2
 
 export PATH=$PATH:/opt/cray/pe/tpsl/20.03.2/GNU/8.2/haswell/lib
 #export PATH=$PATH:/opt/cray/pe/trilinos/12.18.1.1/GNU/8.2/x86_64/lib
 
+export PATH=$PATH:/opt/cray/pe/hdf5/1.10.5.2/GNU/8.2/include
+export PATH=$PATH:/opt/cray/pe/hdf5/1.10.5.2/GNU/8.2/lib
+export PATH=$PATH:/opt/cray/pe/hdf5/1.10.5.2/GNU/8.2/bin
+
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cray/pe/tpsl/20.03.2/GNU/8.2/haswell/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cray/pe/hdf5/1.10.5.2/GNU/8.2/lib
 #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/cray/pe/trilinos/12.18.1.1/GNU/8.2/x86_64/lib
 
 
@@ -100,9 +107,9 @@ $CMAKE -Wno-dev $ELMERSRC \
     -DHypre_INCLUDE_DIR=" "\
     -DMumps_LIBRARIES="-lm" \
     -DMumps_INCLUDE_DIR=" "\
-    -DNETCDF_INCLUDE_DIR:STRING="/opt/cray/pe/netcdf/4.7.4.4/GNU/8.2/include" \
-    -DNETCDF_LIBRARY:STRING="/opt/cray/pe/netcdf/4.7.4.4/GNU/8.2/lib/libnetcdf.so" \
-    -DNETCDFF_LIBRARY:STRING="/opt/cray/pe/netcdf/4.7.4.4/GNU/8.2/lib/libnetcdff.so" \
+    -DNETCDF_INCLUDE_DIR:STRING="/opt/cray/pe/netcdf/4.6.3.2/GNU/8.2/include" \
+    -DNETCDF_LIBRARY:STRING="/opt/cray/pe/netcdf/4.6.3.2/GNU/8.2/lib/libnetcdf.so" \
+    -DNETCDFF_LIBRARY:STRING="/opt/cray/pe/netcdf/4.6.3.2/GNU/8.2/lib/libnetcdff.so" \
     -DCSA_LIBRARY:STRING="/lustre/f2/dev/gfdl/Alexander.Huth/elmerfem/scattered2Dinterpolator/install/lib/libcsa.a" \
     -DCSA_INCLUDE_DIR:STRING="/lustre/f2/dev/gfdl/Alexander.Huth/elmerfem/scattered2Dinterpolator/install/include" \
     -DNN_INCLUDE_DIR:STRING="/lustre/f2/dev/gfdl/Alexander.Huth/elmerfem/scattered2Dinterpolator/install/include" \
@@ -111,14 +118,10 @@ $CMAKE -Wno-dev $ELMERSRC \
     -DMMG_LIBRARY:STRING="/lustre/f2/dev/gfdl/Alexander.Huth/elmerfem/mmg/install/lib64/libmmg.a" \
     -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-g -O3"\
     -DCMAKE_C_FLAGS_RELWITHDEBINFO="-g -O3"\
-    -DCMAKE_Fortran_FLAGS_RELWITHDEBINFO="-g -O3"
-
-
-#     -DCMAKE_INSTALL_PREFIX=$IDIR \
-#     -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN \
-#     -DCMAKE_EXE_LINKER_FLAGS:STRING="-lptesmumps -lptscotch -lptscotcherr -lscotch -lesmumps -fopenmp" \
-#     -DCMAKE_MODULE_LINKER_FLAGS:STRING="-lptesmumps -lptscotch -lptscotcherr -lscotch -lesmumps -fopenmp" \
-#     -DMPI_Fortran_LINK_FLAGS:STRING= "-Wl,-rpath  -Wl,--enable-new-dtags -lptesmumps -lesmumps -fopenmp" \
+    -DCMAKE_Fortran_FLAGS_RELWITHDEBINFO="-g -O3"\
+    -DCMAKE_EXE_LINKER_FLAGS:STRING="-lptesmumps -lptscotch -lptscotcherr -lscotch -lesmumps -fopenmp" \
+    -DCMAKE_MODULE_LINKER_FLAGS:STRING="-lptesmumps -lptscotch -lptscotcherr -lscotch -lesmumps -fopenmp" \
+    -DMPI_Fortran_LINK_FLAGS:STRING= "-Wl,-rpath  -Wl,--enable-new-dtags -lptesmumps -lesmumps -fopenmp"
 echo "Done configuring"
 echo "-------------------------"
 echo "Starting to build:"

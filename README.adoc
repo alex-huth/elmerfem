@@ -15,7 +15,7 @@ Optionally, additional packages must be installed in ./scattered2Dinterpolator a
 (2) mmg (for mesh adaptation): follow http://elmerfem.org/elmerice/wiki/doku.php?id=mesh:meshadaptation
 -Most recent commit seems to work?
 
-Make sure to link both packages with -fPIC. For example, add them within scattered2Dinterpolator/nn-c/nn/CUSTOMISE (same for csa-c), and to ./mmg/mmg/build/configure.sh (see http://elmerfem.org/forum/viewtopic.php?t=7246)
+Make sure to link both packages with -fPIC. For example, add -fPIC flags within scattered2Dinterpolator/nn-c/nn/CUSTOMISE (same for csa-c), and to ./mmg/mmg/build/configure.sh (see http://elmerfem.org/forum/viewtopic.php?t=7246)
 
 Scattered2Dinterpolator is a great way to read in data, so highly recommend installing it
 MMg probably is not needed except for Calving2D/Calving3D (Greenland-style calving)?

@@ -1,37 +1,40 @@
-#Gaea-specific README (A. Huth, 2/18/2022)
+= Gaea-specific README (A. Huth, 2/18/2022)
 
 The following resources are helpful for installing Elmer:
-http://elmerfem.org/elmerice/wiki/doku.php?id=compilation:compilationcmake
-http://www.elmerfem.org/forum/viewtopic.php?p=14949&hilit=cray&sid=387e0a978376057705ead7e557cb48b3#p14949
-http://elmerfem.org/forum/viewtopic.php?t=7246
 
-Here, the cmake script is ./configure, with the toolchain in ./cmake/Toolchains/toolchain.cmake
--Note that I have not been able to link in Trilinos or Zoltan correctly yet, despite the fact both are part of the cray-trilinos module (they may need to be installed and linked separately). However, I have never needed these libraries in the past, anyway
+ * http://elmerfem.org/elmerice/wiki/doku.php?id=compilation:compilationcmake
+ * http://www.elmerfem.org/forum/viewtopic.php?p=14949&hilit=cray&sid=387e0a978376057705ead7e557cb48b3#p14949
+ * http://elmerfem.org/forum/viewtopic.php?t=7246
 
-Optionally, additional packages must be installed in ./scattered2Dinterpolator and ./mmg:
+Here, the cmake script is `./configure`, with the toolchain in `./cmake/Toolchains/toolchain.cmake`
 
-(1) scattered2Dinterpolator: follow http://elmerfem.org/elmerice/wiki/doku.php?id=solvers:scattered
--Note that the most recent commits of nn do not seem to work. Try commit id d540ffe (10/23/2019)
-(2) mmg (for mesh adaptation): follow http://elmerfem.org/elmerice/wiki/doku.php?id=mesh:meshadaptation
--Most recent commit seems to work?
+ * Note that I have not been able to link in Trilinos or Zoltan correctly yet, despite the fact both are part of the cray-trilinos module (they may need to be installed and linked separately). However, I have never needed these libraries in the past, anyway
 
-Make sure to link both packages with -fPIC. For example, add -fPIC flags within scattered2Dinterpolator/nn-c/nn/CUSTOMISE (same for csa-c), and to ./mmg/mmg/build/configure.sh (see http://elmerfem.org/forum/viewtopic.php?t=7246)
+Optionally, the scattered2Dinterpolator and mmg external packages must be installed in `./scattered2Dinterpolator` and `./mmg`, respectively:
 
-Scattered2Dinterpolator is a great way to read in data, so highly recommend installing it
-MMg probably is not needed except for Calving2D/Calving3D (Greenland-style calving)?
+1. scattered2Dinterpolator: follow http://elmerfem.org/elmerice/wiki/doku.php?id=solvers:scattered
+   * Note that the most recent commits of nn do not seem to work. Try commit id d540ffe (10/23/2019)
+2. mmg (for mesh adaptation): follow http://elmerfem.org/elmerice/wiki/doku.php?id=mesh:meshadaptation
+   * Most recent commit seems to work?
 
-According to ./config, Elmer will install in ./.. and the directory will be labeled with the date as Elmer_devel_mm-dd-yy. I like to make a symbolic link to this directory (cd ./.. ; ln -s ./Elmer_devel_mm-dd-yy ./Elmer). Then, add the following to the ~/.bashrc to run Elmer from anywhere (srun -n# ElmerSolver_mpi)
+Make sure to link both packages with -fPIC. For example, add -fPIC flags within scattered2Dinterpolator/nn-c/nn/CUSTOMISE (same for csa-c), and to ./mmg/mmg/build/configure.sh (see http://elmerfem.org/forum/viewtopic.php?t=7246). Scattered2Dinterpolator is very useful for reading in data, but MMg probably is not needed except for Calving2D/Calving3D (Greenland-style calving)?
+
+According to `./config`, Elmer will install in `./..` and the directory will be labeled with the date as `Elmer_devel_mm-dd-yy`. I like to make a symbolic link to this directory (cd `./.. ; ln -s ./Elmer_devel_mm-dd-yy ./Elmer`). Then, add the following to the `~/.bashrc` to run Elmer from anywhere (`srun -n{nprocs} ElmerSolver_mpi`)
+```
 export ELMER_HOME=/lustre/f2/dev/gfdl/Alexander.Huth/Elmer
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ELMER_HOME/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH\:$ELMER_HOME/lib/elmersolver
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH\:$ELMER_HOME/share/elmersolver/lib
 export PATH=$PATH:$ELMER_HOME/bin
+```
+Run ctests from `./build`, noting that on Gaea, the serial Elmer/ice tests will fail unless you edit line 56 of `./elmerice/Tests/test_macros.cmake` as follows: `EXECUTE_PROCESS(COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 1 ${MPIEXEC_PREFLAGS} ${ELMERSOLVER_BIN} ${MPIEXEC_POSTFLAGS}`
 
-Run ctests from ./build, noting that on Gaea, the serial Elmer/ice tests will fail unless you edit line 56 of ./elmerice/Tests/test_macros.cmake as follows: EXECUTE_PROCESS(COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 1 ${MPIEXEC_PREFLAGS} ${ELMERSOLVER_BIN} ${MPIEXEC_POSTFLAGS}
-This edit ensures that serial runs are executed as 'srun -n1 ElmerSolver_mpi' (which reads the .sif in ELMERSOLVER_STARTINFO) rather than the usual approach of 'ElmerSolver foo.sif', which will not work on our computing architecture.
+ * This edit ensures that serial runs are executed as `srun -n1 ElmerSolver_mpi` (which reads the .sif in ELMERSOLVER_STARTINFO) rather than the default approach of `ElmerSolver foo.sif`, which will not work on Gaea.
 
 The vast majority (~95%) of tests should pass. The few solvers that fail either: (1) probably do actually work OK, but their checksums have not been updated in a very long time to reflect minor changes in the code elsewhere; (2) Never seemed to work, e.g. Damage (Krug et al 2014)?; or (3) Rely on libraries we did not link (e.g. Trilinos, Zoltan, etc)
 
 
-#ELMER README:
+= ELMER README:
 
 :imagesdir: pics
 [.text-center]
